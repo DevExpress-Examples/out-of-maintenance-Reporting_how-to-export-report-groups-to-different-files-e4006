@@ -14,16 +14,18 @@ namespace ExportGroups {
         }
 
         private void simpleButton1_Click(object sender, EventArgs e) {
-            XtraReport1 report = new XtraReport1();
-            report.CreateDocument();
+            using (XtraReport1 report = new XtraReport1()) {
+                report.CreateDocument();
 
-            for (int i = 0; i < report.groups.Count; i++) {
-                XtraReport newReport = new XtraReport();
-                for (int j = ((Groups)report.groups[i]).StartPageIndex; j <= ((Groups)report.groups[i]).EndPageIndex; j++) {
-                    newReport.Pages.Add(report.Pages[j]);
+                for (int i = 0; i < report.groups.Count; i++) {
+                    using (XtraReport newReport = new XtraReport()) {
+                        for (int j = ((Groups)report.groups[i]).StartPageIndex; j <= ((Groups)report.groups[i]).EndPageIndex; j++) {
+                            newReport.Pages.Add(report.Pages[j]);
+                        }
+                        string name = Guid.NewGuid().ToString();
+                        newReport.ExportToPdf(name + ".pdf");
+                    }
                 }
-                string name = Guid.NewGuid().ToString();
-                newReport.ExportToPdf(name + ".pdf");
             }
         }
     }
